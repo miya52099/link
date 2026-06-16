@@ -323,8 +323,8 @@
 }
 
 .carousel-track img {
-  flex: 0 0 31%;
-  width: 31%;
+  flex: 0 0 48%;
+  width: 48%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 14px;
@@ -559,29 +559,29 @@
 
     <footer>© 2026 miya. All rights reserved.</footer>
   </main>
-  <script>
+ <script>
   const igCarousel = document.getElementById('igCarousel');
 
   if (igCarousel) {
-    let scrollAmount = 0;
-
     setInterval(() => {
       const item = igCarousel.querySelector('img');
       if (!item) return;
 
-      const itemWidth = item.offsetWidth + 10;
+      const gap = 10;
+      const itemWidth = item.offsetWidth + gap;
       const maxScroll = igCarousel.scrollWidth - igCarousel.clientWidth;
 
-      scrollAmount += itemWidth;
-
-      if (scrollAmount >= maxScroll) {
-        scrollAmount = 0;
+      if (igCarousel.scrollLeft >= maxScroll - 5) {
+        igCarousel.scrollTo({
+          left: 0,
+          behavior: 'smooth'
+        });
+      } else {
+        igCarousel.scrollBy({
+          left: itemWidth,
+          behavior: 'smooth'
+        });
       }
-
-      igCarousel.scrollTo({
-        left: scrollAmount,
-        behavior: 'smooth'
-      });
     }, 2500);
   }
 </script>
