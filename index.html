@@ -304,7 +304,33 @@
       display: block;
       background: #f4dcc8;
     }
+.carousel {
+  width: 100%;
+  overflow: hidden;
+}
 
+.carousel-track {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-track img {
+  flex: 0 0 31%;
+  width: 31%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 14px;
+  scroll-snap-align: start;
+  display: block;
+}
     .image-grid.one {
       grid-template-columns: 1fr;
     }
@@ -490,12 +516,16 @@
         <div class="brand-label">miya_52099</div>
         <h3 class="image-title">用數據整理現況｜用行動改善結構</h3>
 
-        <div class="image-grid">
-          <img src="photo1.png" alt="IG 內容圖 1">
-          <img src="photo2.png" alt="IG 內容圖 2">
-          <img src="photo3.png" alt="IG 內容圖 3">
-          <img src="photo4.png" alt="IG 內容圖 4">
-        </div>
+       <div class="carousel">
+  <div class="carousel-track" id="igCarousel">
+    <img src="photo1.png" alt="IG 內容圖 1">
+    <img src="photo2.png" alt="IG 內容圖 2">
+    <img src="photo3.png" alt="IG 內容圖 3">
+    <img src="photo4.png" alt="IG 內容圖 4">
+  </div>
+</div>
+
+        
       </a>
     </section>
 
@@ -529,5 +559,31 @@
 
     <footer>© 2026 miya. All rights reserved.</footer>
   </main>
+  <script>
+  const igCarousel = document.getElementById('igCarousel');
+
+  if (igCarousel) {
+    let scrollAmount = 0;
+
+    setInterval(() => {
+      const item = igCarousel.querySelector('img');
+      if (!item) return;
+
+      const itemWidth = item.offsetWidth + 10;
+      const maxScroll = igCarousel.scrollWidth - igCarousel.clientWidth;
+
+      scrollAmount += itemWidth;
+
+      if (scrollAmount >= maxScroll) {
+        scrollAmount = 0;
+      }
+
+      igCarousel.scrollTo({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+    }, 2500);
+  }
+</script>
 </body>
 </html>
