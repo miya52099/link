@@ -316,6 +316,11 @@
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  cursor: grab;
+user-select: none;
+}
+    .carousel-track:active {
+  cursor: grabbing;
 }
 
 .carousel-track::-webkit-scrollbar {
@@ -611,6 +616,10 @@
     let carouselTimer = null;
     let isPaused = false;
 
+    let isDragging = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
     function getCurrentIndex() {
       if (!items.length) return 0;
 
@@ -653,7 +662,7 @@
     }
 
     function moveCarousel() {
-      if (isPaused || !items.length) return;
+      if (isPaused || isDragging || !items.length) return;
 
       const currentIndex = getCurrentIndex();
       const nextIndex = currentIndex >= items.length - 1 ? 0 : currentIndex + 1;
@@ -683,18 +692,44 @@
     });
 
     carousel.addEventListener('mouseenter', pauseCarousel);
-    carousel.addEventListener('mouseleave', resumeCarousel);
+    carousel.addEventListener('mouseleave', () => {
+      isDragging = false;
+      setTimeout(resumeCarousel, 800);
+    });
+
+    carousel.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      pauseCarousel();
+
+      startX = e.pageX - carousel.offsetLeft;
+      startScrollLeft = carousel.scrollLeft;
+    });
+
+    carousel.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+
+      e.preventDefault();
+
+      const x = e.pageX - carousel.offsetLeft;
+      const walk = x - startX;
+
+      carousel.scrollLeft = startScrollLeft - walk;
+    });
+
+    carousel.addEventListener('mouseup', () => {
+      if (!isDragging) return;
+
+      isDragging = false;
+      updateDots();
+
+      setTimeout(resumeCarousel, 1200);
+    });
 
     carousel.addEventListener('touchstart', pauseCarousel);
+
     carousel.addEventListener('touchend', () => {
       updateDots();
       setTimeout(resumeCarousel, 1800);
-    });
-
-    carousel.addEventListener('mousedown', pauseCarousel);
-    carousel.addEventListener('mouseup', () => {
-      updateDots();
-      setTimeout(resumeCarousel, 1200);
     });
 
     dots.forEach((dot, index) => {
