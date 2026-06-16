@@ -559,11 +559,16 @@
 
     <footer>© 2026 miya. All rights reserved.</footer>
   </main>
- <script>
+<script>
   const igCarousel = document.getElementById('igCarousel');
 
   if (igCarousel) {
-    setInterval(() => {
+    let carouselTimer = null;
+    let isPaused = false;
+
+    function moveCarousel() {
+      if (isPaused) return;
+
       const item = igCarousel.querySelector('img');
       if (!item) return;
 
@@ -582,7 +587,36 @@
           behavior: 'smooth'
         });
       }
-    }, 2500);
+    }
+
+    function startCarousel() {
+      if (!carouselTimer) {
+        carouselTimer = setInterval(moveCarousel, 2500);
+      }
+    }
+
+    function pauseCarousel() {
+      isPaused = true;
+    }
+
+    function resumeCarousel() {
+      isPaused = false;
+    }
+
+    igCarousel.addEventListener('mouseenter', pauseCarousel);
+    igCarousel.addEventListener('mouseleave', resumeCarousel);
+
+    igCarousel.addEventListener('touchstart', pauseCarousel);
+    igCarousel.addEventListener('touchend', () => {
+      setTimeout(resumeCarousel, 1800);
+    });
+
+    igCarousel.addEventListener('mousedown', pauseCarousel);
+    igCarousel.addEventListener('mouseup', () => {
+      setTimeout(resumeCarousel, 1200);
+    });
+
+    startCarousel();
   }
 </script>
 </body>
