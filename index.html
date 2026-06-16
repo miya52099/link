@@ -323,14 +323,36 @@
 }
 
 .carousel-track img {
-  flex: 0 0 48%;
-  width: 48%;
+  flex: 0 0 88%;
+  width: 88%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 14px;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   display: block;
 }
+    .carousel-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.carousel-dots button {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 1px solid rgba(126, 67, 59, 0.75);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.carousel-dots button.active {
+  background: #7e433b;
+}
+    
     .image-grid.one {
       grid-template-columns: 1fr;
     }
@@ -523,6 +545,13 @@
     <img src="photo3.png" alt="IG 內容圖 3">
     <img src="photo4.png" alt="IG 內容圖 4">
   </div>
+
+           <div class="carousel-dots" data-for="caseCarousel">
+    <button class="active" aria-label="第 1 張"></button>
+    <button aria-label="第 2 張"></button>
+    <button aria-label="第 3 張"></button>
+    <button aria-label="第 4 張"></button>
+  </div>
 </div>
 
         
@@ -564,32 +593,65 @@
 <script>
   function setupCarousel(carouselId) {
     const carousel = document.getElementById(carouselId);
+    const dotsWrap = document.querySelector(`.carousel-dots[data-for="${carouselId}"]`);
 
     if (!carousel) return;
 
+    const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll('button')) : [];
     let carouselTimer = null;
     let isPaused = false;
+
+    function getItemWidth() {
+      const item = carousel.querySelector('img');
+      if (!item) return 0;
+      const gap = 10;
+      return item.offsetWidth + gap;
+    }
+
+    function getCurrentIndex() {
+      const itemWidth = getItemWidth();
+      if (!itemWidth) return 0;
+      return Math.round(carousel.scrollLeft / itemWidth);
+    }
+
+    function updateDots() {
+      if (!dots.length) return;
+
+      const index = getCurrentIndex();
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }
+
+    function scrollToIndex(index) {
+      const itemWidth = getItemWidth();
+      if (!itemWidth) return;
+
+      carousel.scrollTo({
+        left: itemWidth * index,
+        behavior: 'smooth'
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }
 
     function moveCarousel() {
       if (isPaused) return;
 
-      const item = carousel.querySelector('img');
-      if (!item) return;
+      const itemWidth = getItemWidth();
+      if (!itemWidth) return;
 
-      const gap = 10;
-      const itemWidth = item.offsetWidth + gap;
       const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      const currentIndex = getCurrentIndex();
+      const nextIndex = currentIndex + 1;
 
       if (carousel.scrollLeft >= maxScroll - 5) {
-        carousel.scrollTo({
-          left: 0,
-          behavior: 'smooth'
-        });
+        scrollToIndex(0);
       } else {
-        carousel.scrollBy({
-          left: itemWidth,
-          behavior: 'smooth'
-        });
+        scrollToIndex(nextIndex);
       }
     }
 
@@ -607,6 +669,10 @@
       isPaused = false;
     }
 
+    carousel.addEventListener('scroll', () => {
+      window.requestAnimationFrame(updateDots);
+    });
+
     carousel.addEventListener('mouseenter', pauseCarousel);
     carousel.addEventListener('mouseleave', resumeCarousel);
 
@@ -620,6 +686,15 @@
       setTimeout(resumeCarousel, 1200);
     });
 
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        pauseCarousel();
+        scrollToIndex(index);
+        setTimeout(resumeCarousel, 1500);
+      });
+    });
+
+    updateDots();
     startCarousel();
   }
 
