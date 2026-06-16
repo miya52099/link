@@ -615,7 +615,6 @@ user-select: none;
 
     let carouselTimer = null;
     let isPaused = false;
-
     let isDragging = false;
     let startX = 0;
     let startScrollLeft = 0;
@@ -623,11 +622,14 @@ user-select: none;
     function getCurrentIndex() {
       if (!items.length) return 0;
 
+      const carouselCenter = carousel.scrollLeft + carousel.clientWidth / 2;
+
       let closestIndex = 0;
       let closestDistance = Infinity;
 
       items.forEach((item, index) => {
-        const distance = Math.abs(carousel.scrollLeft - item.offsetLeft);
+        const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+        const distance = Math.abs(carouselCenter - itemCenter);
 
         if (distance < closestDistance) {
           closestDistance = distance;
@@ -651,8 +653,13 @@ user-select: none;
     function scrollToIndex(index) {
       if (!items[index]) return;
 
+      const targetLeft =
+        items[index].offsetLeft -
+        carousel.clientWidth / 2 +
+        items[index].offsetWidth / 2;
+
       carousel.scrollTo({
-        left: items[index].offsetLeft,
+        left: targetLeft,
         behavior: 'smooth'
       });
 
@@ -692,8 +699,10 @@ user-select: none;
     });
 
     carousel.addEventListener('mouseenter', pauseCarousel);
+
     carousel.addEventListener('mouseleave', () => {
       isDragging = false;
+      updateDots();
       setTimeout(resumeCarousel, 800);
     });
 
