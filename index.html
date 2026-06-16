@@ -534,12 +534,14 @@
         <div class="brand-label">miya_52099</div>
         <h3 class="image-title">已陪伴上千位夥伴開始他們的第一步</h3>
 
-        <div class="image-grid">
-          <img src="photo5.png" alt="案例圖 1">
-          <img src="photo6.png" alt="案例圖 2">
-          <img src="photo7.png" alt="案例圖 3">
-          <img src="photo8.png" alt="案例圖 4">
-        </div>
+      <div class="carousel">
+  <div class="carousel-track" id="caseCarousel">
+    <img src="photo5.png" alt="案例圖 1">
+    <img src="photo6.png" alt="案例圖 2">
+    <img src="photo7.png" alt="案例圖 3">
+    <img src="photo8.png" alt="案例圖 4">
+  </div>
+</div>
 
         <span class="badge">1:1 免費評估｜了解你的目前狀況</span>
       </a>
@@ -560,29 +562,31 @@
     <footer>© 2026 miya. All rights reserved.</footer>
   </main>
 <script>
-  const igCarousel = document.getElementById('igCarousel');
+  function setupCarousel(carouselId) {
+    const carousel = document.getElementById(carouselId);
 
-  if (igCarousel) {
+    if (!carousel) return;
+
     let carouselTimer = null;
     let isPaused = false;
 
     function moveCarousel() {
       if (isPaused) return;
 
-      const item = igCarousel.querySelector('img');
+      const item = carousel.querySelector('img');
       if (!item) return;
 
       const gap = 10;
       const itemWidth = item.offsetWidth + gap;
-      const maxScroll = igCarousel.scrollWidth - igCarousel.clientWidth;
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
 
-      if (igCarousel.scrollLeft >= maxScroll - 5) {
-        igCarousel.scrollTo({
+      if (carousel.scrollLeft >= maxScroll - 5) {
+        carousel.scrollTo({
           left: 0,
           behavior: 'smooth'
         });
       } else {
-        igCarousel.scrollBy({
+        carousel.scrollBy({
           left: itemWidth,
           behavior: 'smooth'
         });
@@ -603,21 +607,24 @@
       isPaused = false;
     }
 
-    igCarousel.addEventListener('mouseenter', pauseCarousel);
-    igCarousel.addEventListener('mouseleave', resumeCarousel);
+    carousel.addEventListener('mouseenter', pauseCarousel);
+    carousel.addEventListener('mouseleave', resumeCarousel);
 
-    igCarousel.addEventListener('touchstart', pauseCarousel);
-    igCarousel.addEventListener('touchend', () => {
+    carousel.addEventListener('touchstart', pauseCarousel);
+    carousel.addEventListener('touchend', () => {
       setTimeout(resumeCarousel, 1800);
     });
 
-    igCarousel.addEventListener('mousedown', pauseCarousel);
-    igCarousel.addEventListener('mouseup', () => {
+    carousel.addEventListener('mousedown', pauseCarousel);
+    carousel.addEventListener('mouseup', () => {
       setTimeout(resumeCarousel, 1200);
     });
 
     startCarousel();
   }
+
+  setupCarousel('igCarousel');
+  setupCarousel('caseCarousel');
 </script>
 </body>
 </html>
