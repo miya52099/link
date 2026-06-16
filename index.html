@@ -209,7 +209,12 @@
       color: #77471a;
       box-shadow: 0 8px 20px rgba(95,57,21,.08);
     }
-
+.social img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  display: block;
+}
     .main-cta {
       display: grid;
       gap: 12px;
@@ -430,7 +435,7 @@
         </div>
 
         <div class="avatar">
-          <img src="avatar.jpg" alt="miya 頭像">
+          <img src="avatar.png" alt="miya 頭像">
         </div>
       </div>
 
@@ -440,16 +445,24 @@
 ⬇️ 先去看看我的內容 ⬇️</p>
 
       <div class="socials">
-        <a class="social" href="https://www.instagram.com/miya_52099/" target="_blank" onclick="trackClick('click_social_instagram','instagram')">IG</a>
-        <a class="social" href="https://www.youtube.com/@Miya_52099" target="_blank" onclick="trackClick('click_social_youtube','youtube')">YT</a>
-        <a class="social" href="https://line.me/ti/p/HtgEDAYzsr" target="_blank" onclick="trackClick('click_social_line','line')">LINE</a>
+       <a class="social" href="https://www.instagram.com/miya_52099/" target="_blank" onclick="trackClick('click_social_instagram','instagram')">
+  <img src="icon-ig.png" alt="Instagram">
+</a>
+
+<a class="social" href="https://www.youtube.com/@Miya_52099" target="_blank" onclick="trackClick('click_social_youtube','youtube')">
+  <img src="icon-youtube.png" alt="YouTube">
+</a>
+
+<a class="social" href="https://line.me/ti/p/HtgEDAYzsr" target="_blank" onclick="trackClick('click_social_line','line')">
+  <img src="icon-line.png" alt="LINE">
+</a>
       </div>
     </section>
    
     <section class="section">
       <h2 class="section-title">最新優惠</h2>
 
-      <a class="card image-card" href="https://reurl.cc/53998n" target="_blank" onclick="trackClick('click_image_top','top image')">
+      <a class="card image-card" href="https://line.me/ti/p/HtgEDAYzsr" target="_blank" onclick="trackClick('click_image_top','top image')">
         <div class="image-grid one">
           <img src="main-photo.jpg" alt="精選圖片內容">
         </div>
