@@ -605,21 +605,28 @@
 
     if (!carousel) return;
 
+    const items = Array.from(carousel.querySelectorAll('img'));
     const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll('button')) : [];
+
     let carouselTimer = null;
     let isPaused = false;
 
-    function getItemWidth() {
-      const item = carousel.querySelector('img');
-      if (!item) return 0;
-      const gap = 10;
-      return item.offsetWidth + gap;
-    }
-
     function getCurrentIndex() {
-      const itemWidth = getItemWidth();
-      if (!itemWidth) return 0;
-      return Math.round(carousel.scrollLeft / itemWidth);
+      if (!items.length) return 0;
+
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+
+      items.forEach((item, index) => {
+        const distance = Math.abs(carousel.scrollLeft - item.offsetLeft);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      return closestIndex;
     }
 
     function updateDots() {
@@ -633,11 +640,10 @@
     }
 
     function scrollToIndex(index) {
-      const itemWidth = getItemWidth();
-      if (!itemWidth) return;
+      if (!items[index]) return;
 
       carousel.scrollTo({
-        left: itemWidth * index,
+        left: items[index].offsetLeft,
         behavior: 'smooth'
       });
 
@@ -647,20 +653,12 @@
     }
 
     function moveCarousel() {
-      if (isPaused) return;
+      if (isPaused || !items.length) return;
 
-      const itemWidth = getItemWidth();
-      if (!itemWidth) return;
-
-      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
       const currentIndex = getCurrentIndex();
-      const nextIndex = currentIndex + 1;
+      const nextIndex = currentIndex >= items.length - 1 ? 0 : currentIndex + 1;
 
-      if (carousel.scrollLeft >= maxScroll - 5) {
-        scrollToIndex(0);
-      } else {
-        scrollToIndex(nextIndex);
-      }
+      scrollToIndex(nextIndex);
     }
 
     function startCarousel() {
@@ -677,8 +675,11 @@
       isPaused = false;
     }
 
+    let scrollTimeout = null;
+
     carousel.addEventListener('scroll', () => {
-      window.requestAnimationFrame(updateDots);
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(updateDots, 80);
     });
 
     carousel.addEventListener('mouseenter', pauseCarousel);
@@ -686,11 +687,13 @@
 
     carousel.addEventListener('touchstart', pauseCarousel);
     carousel.addEventListener('touchend', () => {
+      updateDots();
       setTimeout(resumeCarousel, 1800);
     });
 
     carousel.addEventListener('mousedown', pauseCarousel);
     carousel.addEventListener('mouseup', () => {
+      updateDots();
       setTimeout(resumeCarousel, 1200);
     });
 
